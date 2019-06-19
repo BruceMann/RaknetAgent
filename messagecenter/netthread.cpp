@@ -70,7 +70,11 @@ void NetThread::run()
         {
             // We got a packet, get the identifier with our handy function
             packetIdentifier = GetPacketIdentifier(p);
-            qDebug()<<packetIdentifier;
+
+            if(packetIdentifier<ID_USER_PACKET_ENUM){
+                qDebug()<<"raknet syetem message::"<<packetIdentifier;
+            }
+            qDebug()<<"packetIdentifier  "<<packetIdentifier;
 
             // Check if this is a network message packet
             switch (packetIdentifier) {
