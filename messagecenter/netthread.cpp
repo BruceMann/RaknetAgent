@@ -80,7 +80,7 @@ void NetThread::run()
             switch (packetIdentifier) {
             case ID_DISCONNECTION_NOTIFICATION:
                 // Connection lost normally
-                qDebug("ID_DISCONNECTION_NOTIFICATION from %s\n", p->systemAddress.ToString(true));;
+                qDebug("ID_DISCONNECTION_NOTIFICATION from %s\n", p->systemAddress.ToString(true));
                 break;
             case ID_ALREADY_CONNECTED:
                 qDebug("ID_ALREADY_CONNECTED with guid %" PRINTF_64_BIT_MODIFIER "u\n", p->guid);
@@ -114,6 +114,7 @@ void NetThread::run()
                 qDebug("My external address is %s\n", pConnection->GetExternalID(p->systemAddress).ToString(true));
                 break;
             case ID_CONNECTION_ATTEMPT_FAILED:
+                qDebug("ID_CONNECTION_ATTEMPT_FAILED");
                 break;
             default:
                 qDebug()<<"raknet server message got !!!!!!!!!!!!!!";
@@ -127,11 +128,9 @@ void NetThread::run()
 
 bool NetThread::connectRaknet()
 {
-    const char* ip = mServerIP.toStdString().c_str();
-
     qDebug()<<"connect server:: ip:"<<mServerIP<<mServerPort;
 
-    ConnectionAttemptResult res = pConnection->Connect(ip, (unsigned short)mServerPort, "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));
+    ConnectionAttemptResult res = pConnection->Connect(mServerIP.toStdString().c_str(), (unsigned short)mServerPort, "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));
 
     qDebug()<<"ConnectionAttemptResult"<<res;
 

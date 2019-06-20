@@ -49,8 +49,11 @@ public slots:
     void startClassServer(ClientInfo* clientInfo);
 
     bool startLocalServer();
+
     void readPortNum();
+
     void onGetServerPort();
+
     void sendServerDataToClient(ClientInfo *client);
 
     void serverStart();

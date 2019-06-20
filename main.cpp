@@ -55,6 +55,7 @@ void parse(int argc, char* argv[]) {
         }
     }
     qDebug() << "-m agent  mode :" << gMode;
+    qDebug() << "-r user role   :" << gRole;
     qDebug() << "-si server ip  :" << gServerIp;
     qDebug() << "-sp server port:" << gServerPort;
     qDebug() << "-ui udp ip     :" << gUdpIp;
