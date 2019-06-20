@@ -67,37 +67,27 @@ void GetMyIP_Windows_Linux_IPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_I
 #if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32__)
 #include <netdb.h>
 #endif
+
+
+
 void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
-
-
-
-	int idx=0;
-	char ac[ 80 ];
-	int err = gethostname( ac, sizeof( ac ) );
-    (void) err;
-	RakAssert(err != -1);
-	
-	struct hostent *phe = gethostbyname( ac );
-
-	if ( phe == 0 )
-	{
-		RakAssert(phe!=0);
-		return ;
-	}
-	for ( idx = 0; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
-	{
-		if (phe->h_addr_list[ idx ] == 0)
-			break;
-
-		memcpy(&addresses[idx].address.addr4.sin_addr,phe->h_addr_list[ idx ],sizeof(struct in_addr));
-	}
-	
-	while (idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
-	{
-		addresses[idx]=UNASSIGNED_SYSTEM_ADDRESS;
-		idx++;
-	}
+    int idx=0;
+    struct addrinfo* feed_server = NULL;
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = AF_INET;
+    getaddrinfo("localhost", NULL, &hints, &feed_server);
+    struct addrinfo *res;
+    for(res = feed_server; res != NULL; res = res->ai_next) {
+        struct sockaddr_in* saddr = (struct sockaddr_in*)res->ai_addr;
+        memcpy(&addresses[idx].address.addr4.sin_addr, &saddr->sin_addr, sizeof(struct in_addr));
+        idx++;
+    }
+    while (idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS) {
+        addresses[idx]=UNASSIGNED_SYSTEM_ADDRESS;
+        idx++;
+    }
 
 }
 

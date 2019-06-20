@@ -131,7 +131,7 @@ bool NetThread::connectRaknet()
 
     qDebug()<<"connect server:: ip:"<<mServerIP<<mServerPort;
 
-    ConnectionAttemptResult res = pConnection->Connect("192.168.1.62", (unsigned short)mServerPort, "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));
+    ConnectionAttemptResult res = pConnection->Connect(ip, (unsigned short)mServerPort, "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));
 
     qDebug()<<"ConnectionAttemptResult"<<res;
 

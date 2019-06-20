@@ -12,13 +12,12 @@
 //
 
 
-
 #define CAT_NEUTER_EXPORT /* Neuter dllimport for libcat */
 
 #include "RakNetDefines.h"
 #include "RakPeer.h"
 #include "RakNetTypes.h"
-
+#include <QDebug>
 #ifdef _WIN32
 
 #else

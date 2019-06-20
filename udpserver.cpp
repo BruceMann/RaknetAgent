@@ -21,20 +21,22 @@ UdpServer::UdpServer(QObject *parent):
     m_read_udpSocket->bind(m_read_Port,QUdpSocket::ShareAddress);
     connect(m_read_udpSocket,&QUdpSocket::readyRead,this,&UdpServer::processUdpDatagrams);
 
-    if(0 == gRemoteServer){    //本地测试
-        qDebug()<<"local test";
-        startWebSocketServer();
-        startLocalServer();
-    }else{
-        qDebug()<<"remote test";
-        m_raknet = new NetThread(this);
-        connect(m_raknet,&NetThread::dispatchMessage,this,&UdpServer::onRaknetMessage);
-        m_raknet->setServerInfo(QString("192.168.1.62"),gServerPort);
-        if(m_raknet&& m_raknet->connectRaknet()){
-            qDebug()<<"raknet connect success  !!!";
-        }else{
-            qDebug()<<"raknet failed  !!!";
-        }
+    if(0 == gMode){    //本地测试
+        qDebug()<<"agent mode: local";
+        if(1 == gRole){ //本地测试 老师开课 RaknetAgent 实现Deamon功能，建立websocket，本地拉起QBoardServer进程
+            qDebug()<<"user role: teacher";
+            startWebSocketServer();
+            startLocalServer();
+        }else if(0 == gRole) //本地测试 学生上课 需要老师已经完成服务器建立，学生直接建立raknet连接通信
+            buildRaknet(gServerIp,gServerPort);
+    }else if( 1 == gMode){   //远程测试 课堂服务器已经在远程服务器建立，老师和学生直接建立raknet连接，需要老师先开课
+        qDebug()<<"agent mode: remote";
+        if(1 == gRole)
+            qDebug()<<"user role: teacher";
+        else if(0 == gRole)
+            qDebug()<<"user role: student";
+
+        buildRaknet(gServerIp,gServerPort);
     }
 }
 
@@ -75,11 +77,11 @@ void UdpServer::processUdpDatagrams()
     }
 }
 
-void UdpServer::buildRaknet()
+void UdpServer::buildRaknet(const QString& classServerIp,int classserverPort)
 {
     m_raknet = new NetThread(this);
     connect(m_raknet,&NetThread::dispatchMessage,this,&UdpServer::onRaknetMessage);
-    m_raknet->setServerInfo(QString("192.168.1.62"),mBoardServerPort);
+    m_raknet->setServerInfo(classServerIp,classserverPort);
     if(m_raknet && m_raknet->connectRaknet()){
         qDebug()<<"raknet connect success  !!!";
     }else{
@@ -219,17 +221,17 @@ void UdpServer::sendServerDataToClient(ClientInfo *client)
     //返回执行结果，proto序列化
     Channel msg;
     ClassResultParam *res = new ClassResultParam;
-    mBoardServerPort = client->serverPort;
-    qDebug()<<"sendServerDataToClient serverPort::"<<mBoardServerPort;
-    res->set_port(client->serverPort);   //res->set_port(2222)--> //TODO::配置端口修改为获取的动态端口
-    res->set_ip("192.168.1.62");
+
+    qDebug()<<"sendServerDataToClient serverPort::"<<client->serverPort;
+    res->set_port(client->serverPort);
+    res->set_ip(gUdpIp.toStdString().c_str());  //raknetagent 代替Deamon 功能 此处为raknetagent ip
     msg.set_allocated_resultparam(res);
     QByteArray response;
     response.resize(msg.ByteSize());
     msg.SerializeToArray(response.data(), response.size());
     pWebSocket->sendBinaryMessage(response);
 
-    buildRaknet();
+    buildRaknet(gUdpIp,client->serverPort);
 }
 
 void UdpServer::serverStart()

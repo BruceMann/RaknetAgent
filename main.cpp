@@ -31,24 +31,32 @@ void parse(int argc, char* argv[]) {
         char* param = argv[i];
         if ((param[0] == '-') && (strlen(param) > 1)) {
             switch (param[1]) {
-            case 'i':
-                gServerIp = QString(argv[++i]);
-                break;
-            case 'p':
-                gServerPort = QString(argv[++i]).toInt();
+            case 'm':
+                gMode = QString(argv[++i]).toInt();
                 break;
             case 'r':
-                gRemoteServer = QString(argv[++i]).toInt();
+                gRole = QString(argv[++i]).toInt();
                 break;
-            case 'u':
-                gUdpPort = QString(argv[++i]).toInt();
+            case 's':{
+                if('i' == param[2])
+                    gServerIp = QString(argv[++i]);
+                if('p' == param[2])
+                    gServerPort = QString(argv[++i]).toInt();
+            }
+                break;
+            case 'u':{
+                if('i' == param[2])
+                    gUdpIp = QString(argv[++i]);
+                if('p' == param[2])
+                    gUdpPort = QString(argv[++i]).toInt();
+            }
                 break;
             }
         }
     }
-    qDebug() << "-i ip is:" << gServerIp;
-    qDebug() << "-r is remote test"<<gRemoteServer;
-    qDebug() << "-u udp port"<<gUdpPort;
-    qDebug() << "-p serverport is:" << gServerPort;
-
+    qDebug() << "-m agent  mode :" << gMode;
+    qDebug() << "-si server ip  :" << gServerIp;
+    qDebug() << "-sp server port:" << gServerPort;
+    qDebug() << "-ui udp ip     :" << gUdpIp;
+    qDebug() << "-up udp port   :" << gUdpPort;
 }

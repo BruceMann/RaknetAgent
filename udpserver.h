@@ -38,7 +38,7 @@ public:
 public slots:
     void processUdpDatagrams();
 
-    void buildRaknet();
+    void buildRaknet(const QString &classServerIp, int classserverPort);
 
     void onRaknetMessage(const void *data, int length);
 
@@ -71,7 +71,6 @@ private:
 
     QList<ClientInfo*> mClients;                                 //在线客户
     QString uuid;                                                //课堂服务器 本地socket 通信标志
-    int     mBoardServerPort;
 };
 
 #endif // UDPSERVER_H
