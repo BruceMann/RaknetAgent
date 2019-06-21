@@ -13,7 +13,7 @@
 UdpServer::UdpServer(QObject *parent):
     QObject(parent),
     m_read_udpSocket(new QUdpSocket(this)),
-    m_write_udpSocket(new QUdpSocket(this)),
+//    m_write_udpSocket(new QUdpSocket(this)),
     m_read_Port(gUdpPort),
     senderPort(0),
     uuid(QUuid::createUuid().toString())
@@ -102,7 +102,7 @@ void UdpServer::onRaknetMessage(const void *data, int length)
         qDebug()<<"message content: "<<content;
 
     qDebug()<<"send udp message to ip&port::  "<<sender<<"  "<<senderPort;
-    m_write_udpSocket->writeDatagram((char*)data, length,
+    m_read_udpSocket->writeDatagram((char*)data, length,
                                      sender, senderPort);
 }
 

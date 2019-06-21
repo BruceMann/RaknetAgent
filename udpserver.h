@@ -60,7 +60,7 @@ public slots:
 
 private:
     QUdpSocket* m_read_udpSocket;
-    QUdpSocket* m_write_udpSocket;
+//    QUdpSocket* m_write_udpSocket;
 
     int m_read_Port;
 
